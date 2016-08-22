@@ -1,0 +1,29 @@
+#!/usr/bin/python
+import sys
+import os
+from random import randint
+import subprocess
+#Change this to your wordlist:
+########################################
+file='/home/smokeless/flipflop/hostnames'
+########################################
+
+def change_hostname():
+    f = open( file, 'r' )
+    words = f.readlines()
+    f.close()
+    sizeof = len(words)
+    newHostName = words[randint(0,sizeof)]
+    #print( 'hostnamectl set-hostname', newHostName )
+    subprocess.call( 'hostnamectl ' + 'set-hostname ' + newHostName , shell=True  ) 
+
+def change_mac():
+    interfaces = os.listdir('/sys/class/net/')
+    for iface in interfaces:
+        if iface != "lo":
+            subprocess.call([ 'macchanger', '-r', iface ])
+        else:
+            print( "Not changing loopback interface." )
+
+change_hostname()
+change_mac()
