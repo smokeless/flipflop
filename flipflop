@@ -7,6 +7,15 @@ import subprocess
 ########################################
 file='/home/smokeless/flipflop/hostnames'
 ########################################
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
 
 def change_hostname():
     f = open( file, 'r' )
@@ -14,16 +23,30 @@ def change_hostname():
     f.close()
     sizeof = len(words)
     newHostName = words[randint(0,sizeof)]
-    #print( 'hostnamectl set-hostname', newHostName )
-    subprocess.call( 'hostnamectl ' + 'set-hostname ' + newHostName , shell=True  ) 
+    print( "Changing hostname to:", bcolors.OKGREEN, newHostName, bcolors.ENDC)
+    try:
+        subprocess.call( 'hostnamectl ' + 'set-hostname ' + newHostName, shell=True ) 
+    except:
+        e = sys.exc_info()[0]
+        print( bcolors.FAIL, "Could not change hostname!!!", bcolors.ENDC )
+#Maybe make this call without shell?
 
 def change_mac():
     interfaces = os.listdir('/sys/class/net/')
     for iface in interfaces:
         if iface != "lo":
-            subprocess.call([ 'macchanger', '-r', iface ])
+            try:
+                status = subprocess.call([ 'macchanger', '-r', iface ])
+                if status == 0:
+                    print( bcolors.OKGREEN, "MAC randomized.", bcolors.ENDC )
+                else:
+                    print( bcolors.FAIL, "Could not change MAC!!!", bcolors.ENDC)
+            except:
+                e = sys.exc_info()[0]
+                print( bcolors.FAIL, "Could not change MAC!!!", bcolors.ENDC )
         else:
             print( "Not changing loopback interface." )
+
 
 change_hostname()
 change_mac()

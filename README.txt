@@ -1,10 +1,7 @@
 What is flipflop?
-	Flipflop is a set of python scripts and systemd service
-modules which will change the hostname of the machine at startup,
-change the mac address of the machine at start up, and clean
-the machines RAM/history files at shutdown.
+	It's a just a simple python script for a random hostname/mac address.
 
-Currently uses:
+What does it rely on?
 macchanger
 hostnamectl
-memwipe or whatever
+a file full of words
